@@ -2,17 +2,21 @@
 #include "Game.h"
 #include <iostream>
 #include <vector>
+#include <array>
 #include "string"
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+#include <windows.h>
 using namespace std;
 bool turn = true;
 bool isAIOn = false;
 
 
 void gameMessages(int x){
-	// This Method Stores all the messages for the game, this design pattern allows for a centralized place for the editting of in game messages
-	// leaving the possibility for lighter weight code
+	/******************************************************************************************************************************************
+	 This Method Stores all the messages for the game. 
+	 This design pattern allows for a centralized place for the editting of in game messages.
+	 ******************************************************************************************************************************************/
 	switch (x){
 
 	case 1:
@@ -30,23 +34,54 @@ void gameMessages(int x){
 		cout << "Player O please make a move and press enter." << endl;
 		break;
 	case 5:
-		cout << "It's a tie." << endl;
+		cout << "move has already been taken please try again." << endl;
 		break;
 	case 6:
-		cout << "You are the winner!" << endl;
+		cout << "It's a tie." << endl;
 		break;
 	case 7:
-		cout << "move has already been taken please try again." << endl;
+	
+		for (int x = 0; x < 8; x++){
+			cout << "!";
+			Sleep(50);
+			cout << " * ";
+			Sleep(50);
+		}
+		cout << "Y ";
+		Sleep(50);
+		cout << "O ";
+		Sleep(50);
+		cout << "U ";
+		Sleep(50);
+		cout << "  W ";
+		Sleep(50);
+		cout << "I ";
+		Sleep(50);
+		cout << "N ";
+		Sleep(50);
+		for (int x = 0; x < 8; x++){
+			cout << "!";
+			Sleep(50);
+			cout << " * ";
+			Sleep(50);
+		}
+		cout<< endl;
+
 		break;
 
 	}
 
 }
-
+/*************************************************************************************************
+This is the board class which simulates the physical board.The board class has only methods that
+display itself for the user and has tests to describe its "physical" form.
+**************************************************************************************************/
 class Board{
 public:
 	vector<string> moves;
 	Board(){
+
+	
 		moves.push_back("0");
 		moves.push_back("1");
 		moves.push_back("2");
@@ -56,7 +91,7 @@ public:
 		moves.push_back("6");
 		moves.push_back("7");
 		moves.push_back("8");
-
+		
 	}
 
 
@@ -82,10 +117,10 @@ public:
 		else{
 			if (turn && isAIOn){
 				//only prints out message if its users turn
-				gameMessages(7);
+				gameMessages(5);
 			}
 			if (!isAIOn){
-				gameMessages(7);
+				gameMessages(5);
 			}
 			return false;
 		}
@@ -97,8 +132,7 @@ public:
 	}
 
 	bool isFull(){
-		//test that returns true if the all possible move have been taken and
-		//that it the board is indeed full
+		//test that returns true if the all possible move have been taken and the board is indeed full
 		for (int x = 0; x < moves.size(); x++){
 			if (moves[x] != "X" && moves[x] != "O"){
 				return false;
@@ -108,6 +142,10 @@ public:
 	}
 
 };// end board class
+
+/****************************************************************************************
+Internal methods used only by the game class
+****************************************************************************************/
 void getTurn(){
 	//prompts a player X or O to make a move
 	if (turn){
@@ -139,7 +177,7 @@ bool isWinner(Board b){
 		}
 	}
 	//column cases
-	for (int x = 0; x<=b.moves.size()/3; x++){
+	for (int x = 0; x<b.moves.size()/3; x++){
 		if (b.moves[x] == b.moves[x + 3] && b.moves[x] == b.moves[x + 6]){
 			return true;
 		}
@@ -173,6 +211,9 @@ void go(int input, Board& b){
 
 }
 
+/***********************************************************************************************************************************************************
+*********************************This is the CODE for the AI************************************************************************************************
+************************************************************************************************************************************************************/
 void setIsAIOn(){
 	gameMessages(2);
 	cin >> isAIOn;
@@ -192,16 +233,21 @@ bool testIfNextMoveIsWinForTheAI(int n, Board b){
 
 }
 
+/***************************************************************************************************************************************************************
+**** NOTE TO MY TEAMATES for the function AIMoveDecision(b, B) *lower case b is a copy of the board *Capital B is the actual Board were using's memory address
+**** When b[oard] copy is finished being used by the method the compiler will throw it off the stack and no actual changes to the flow of the game is made
+**** This is done so the computer may simulate a series of moves by a human and therefore decide a course of action.
+***************************************************************************************************************************************************************/
 void AIMoveDecision(Board b, Board &B){
 
 	/*
 	If the middle position hasnt been taken then
 	the AI will take middle position.
-	| |
-	--------
-	|O|
-	--------
-	| |
+		  | |
+		--------
+		  |O|
+		--------
+		  | |
 	*/
 	if (b.isFree(4)){
 		go(4, B);
@@ -229,18 +275,17 @@ void AIMoveDecision(Board b, Board &B){
 			return;
 		}
 	}
-
-
-
-
 	//****end brute force technique.******
 
+	
+	
+	
 	/*
-	T| |T
-	--------
-	|X|
-	--------
-	T| |T
+		 T| |T
+		--------
+		  |X|
+		--------
+		 T| |T
 
 	If human player takes center piece the AI takes a corner piece
 
@@ -277,32 +322,25 @@ void AIMoveDecision(Board b, Board &B){
 			go(random, B);
 			return;
 		}
-	}//end while
+	}
 
 
 
-}//end function
-
-
-
-
-
-///AI End
+}//AI End
 
 
 void Game::start(){
-
-
 	Board B;
-
+	
 	gameMessages(1);
+	
 	setIsAIOn();
-
 	while (true){
 		B.display();
 		getTurn();
 
 		int console_input;
+		// The following if else statement splits the computer onto two different paths depending if the AI is on
 		if (!isAIOn){
 			cin >> console_input;
 			go(console_input, B);
@@ -314,26 +352,22 @@ void Game::start(){
 			}
 			else{
 				AIMoveDecision(B, B);
-
 			}
-
 		}
 
-
+		
 		if (isTie(B)){
 			B.display();
-			gameMessages(5);
+			gameMessages(6);
 			break;
 		}
 		if (isWinner(B)){
 			B.display();
 			string winner = turn ? "O" : "X";
-			cout <<"Player"<<winner;
-			gameMessages(6);
+			cout <<"                                   Player "<<winner<<""<<endl;
+			gameMessages(7);
 			break;
 		}
 
-	}
-	
-
+	}	
 }
