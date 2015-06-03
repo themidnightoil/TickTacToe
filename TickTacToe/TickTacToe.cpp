@@ -1,5 +1,4 @@
-// TickTacToe.cpp : Defines the entry point for the console application.
-//
+//Project made by Danny Shum and Diego Baca
 
 #include "stdafx.h"
 #include "Game.h"

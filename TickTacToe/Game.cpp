@@ -316,7 +316,7 @@ void AIMoveDecision(Board b, Board &B){
 
 
 	srand(time(NULL));
-	while (true && !b.isFull()){
+	while (!b.isFull()){
 		int random = rand() % 8;
 		if (b.isFree(random)){
 			go(random, B);
@@ -355,12 +355,6 @@ void Game::start(){
 			}
 		}
 
-		
-		if (isTie(B)){
-			B.display();
-			gameMessages(6);
-			break;
-		}
 		if (isWinner(B)){
 			B.display();
 			string winner = turn ? "O" : "X";
@@ -368,6 +362,12 @@ void Game::start(){
 			gameMessages(7);
 			break;
 		}
+		if (isTie(B)){
+			B.display();
+			gameMessages(6);
+			break;
+		}
+		
 
 	}	
 }
